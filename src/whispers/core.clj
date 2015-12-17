@@ -1,6 +1,9 @@
-(ns whispers.core)
+(ns whispers.core
+  (:require [tephalome.encryption.rsa :as rsa]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defn client 
+  [server-url]
+  (let [{:keys [public private]} (rsa/generate-keys)]
+    {:public public
+     :private private
+     :server-url server-url}))
