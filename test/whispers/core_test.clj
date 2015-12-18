@@ -20,18 +20,18 @@
 (use-fixtures :each rooms-and-corners)
 
 (deftest client-test
-  (with-redefs [rsa/generate-keys (constantly {:public "public"
-                                           :private "private"})]
-    (let [c (client "a url")]
-      (testing "sets private key"
-        (is (= "private" (:private c))))
-      (testing "sets public key"
-        (is (= "public" (:public c))))
-      (testing "sets server url"
-        (is (= "a url" (:server-url c)))))))
+  (let [ks (rsa/generate-keys)]
+    (with-redefs [rsa/generate-keys (constantly ks)]
+      (let [c (client "a url")]
+        (testing "sets private key"
+          (is (= (:private ks) (:private c))))
+        (testing "sets public key"
+          (is (= (:public ks) (:public c))))
+        (testing "sets server url"
+          (is (= "a url" (:server-url c))))))))
 
-#_(deftest join
+(deftest join-test
   (testing "can join a room")
-  (let [c (client "localhost:6666")
+  (let [c (client "http://localhost:6666")
         room (join c "test-room")]
-    (is (= [:public c] (:members room)))))
+    (is (= [(:public c)] (:members room)))))
